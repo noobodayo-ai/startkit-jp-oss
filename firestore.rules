@@ -1,0 +1,84 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 共通ヘルパー
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function userTenantId() {
+      return request.auth.token.tenantId;
+    }
+    function userRole() {
+      return request.auth.token.role;
+    }
+    function isOwnerOrAdmin() {
+      return userRole() == 'owner' || userRole() == 'admin';
+    }
+    function memberOf(tenantId) {
+      return isSignedIn() && userTenantId() == tenantId;
+    }
+
+    // ===== tenants/{tenantId} =====
+    match /tenants/{tenantId} {
+      // 読み取りはテナントメンバーのみ
+      allow read: if memberOf(tenantId);
+      // テナントメタの更新はOwner/Adminのみ。create はサーバー（Admin SDK）経由のみ。
+      allow update: if memberOf(tenantId) && isOwnerOrAdmin();
+      allow create, delete: if false;
+
+      // メンバーサブコレクション
+      match /members/{uid} {
+        allow read: if memberOf(tenantId);
+        // 自分の情報は読めるが書き換え不可、招待/Custom Claims経由のみ。
+        allow write: if false;
+      }
+
+      // 監査ログ：Owner/Adminのみ閲覧可、書き換えはサーバー側のみ
+      match /audit_logs/{logId} {
+        allow read: if memberOf(tenantId) && isOwnerOrAdmin();
+        allow write: if false;
+      }
+
+      // 任意のサブコレクション（ユーザーが追加するアプリデータ）
+      match /{document=**} {
+        allow read, write: if memberOf(tenantId);
+      }
+    }
+
+    // ===== invites/{id} =====
+    // 招待はサーバー（Admin SDK）経由でのみ作成・更新。
+    // クライアントからの直接読み取りは禁止（コード照合は Server Action 経由）。
+    match /invites/{id} {
+      allow read, write: if false;
+    }
+
+    // ===== invoices/{id} =====
+    // 自分のテナントの請求書のみ閲覧可。書き換えはサーバー側のみ。
+    match /invoices/{id} {
+      allow read: if isSignedIn() && resource.data.tenant_id == userTenantId();
+      allow write: if false;
+    }
+
+    // ===== invoice_audit/{id} =====
+    // v1.10.0: 適格請求書 tamper-evidence の authoritative backstop。
+    // 発行時に Admin SDK の `.create()` で 1 回だけ書込まれ、 client からは完全に読書不可。
+    // PDF 再生成ルート (Admin SDK 経由) でのみ参照し、 `invoices/{id}` 内の改ざんを検知する。
+    match /invoice_audit/{id} {
+      allow read, write: if false;
+    }
+
+    // ===== invoice_dedup/{stripe_invoice_id} =====
+    // v1.10.0: Stripe webhook 並列再送の atomic idempotency。
+    // `.create()` で 1 回だけ書込まれ、 並列ハンドラ間の重複発番を防ぐ。 client からは完全に読書不可。
+    match /invoice_dedup/{id} {
+      allow read, write: if false;
+    }
+
+    // ===== fallback =====
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,87 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+/out-marketing/
+
+# Cloudflare デプロイ用の API トークン（絶対にコミットしない）
+.cloudflare.env
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Firebase / GCP service account JSON
+firebase-adminsdk*.json
+*-firebase-adminsdk-*.json
+service-account*.json
+gcp-key*.json
+
+# Stripe / local secrets
+.stripe/
+stripe-cli/
+*.secret
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+Thumbs.db
+
+# init script marker
+.startkit-initialized
+
+# pre-publish-check の個人情報パターン定義（販売者ごとに固有）
+.publish-check-personal
+
+# direnv（販売者ごとに GH_CONFIG_DIR 等を切替するためのローカル設定）
+.envrc
+
+# 販売者ローカルの作業メモ（NEXT_SESSION.md 等。購入者には不要）
+docs/internal/
+
+# Firebase project alias（個人デプロイ環境名は同梱しない）
+.firebaserc
+
+# Playwright
+/playwright-report/
+/test-results/
+/playwright/.cache/
+
+# 同梱フォント（pnpm setup:fonts でビルド時にダウンロード）
+/public/fonts/*.ttf
+/public/fonts/*.otf

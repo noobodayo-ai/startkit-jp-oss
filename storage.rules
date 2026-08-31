@@ -1,0 +1,23 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // 適格請求書 PDF：所属テナントのメンバーのみ閲覧可、書き込みはサーバー（Admin SDK）のみ
+    // Admin SDK はルールをバイパスするので、サーバ書き込み・公開URL作成は問題ない
+    match /invoices/{tenantId}/{file=**} {
+      allow read: if request.auth != null && request.auth.token.tenantId == tenantId;
+      allow write: if false;
+    }
+
+    // テナント配下の任意のアセット（ロゴ、添付ファイル等）
+    match /tenants/{tenantId}/{file=**} {
+      allow read, write: if request.auth != null && request.auth.token.tenantId == tenantId;
+    }
+
+    // fallback：それ以外は明示的に禁止
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}
