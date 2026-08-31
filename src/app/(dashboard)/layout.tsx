@@ -2,9 +2,9 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { clearSessionCookie, getSessionUser } from "@/lib/session";
 
-// ログアウトは Server Action で行う。以前は <form method="post" action="/api/session?_method=DELETE">
-// だったが、Next.js の Route Handler は POST を DELETE に読み替えないため、
-// POST 側（idToken 必須）に落ちて常に失敗していた。
+// ログアウトは Server Action で行う。以前はクエリで疑似メソッドを渡して DELETE のつもりで
+// POST するフォームだったが、Next.js の Route Handler はそれを読み替えないため、
+// idToken を要求する POST ハンドラに落ちて常に失敗していた。
 async function logout() {
   "use server";
   await clearSessionCookie();
