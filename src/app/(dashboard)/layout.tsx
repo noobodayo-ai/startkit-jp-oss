@@ -1,6 +1,15 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getSessionUser } from "@/lib/session";
+import { clearSessionCookie, getSessionUser } from "@/lib/session";
+
+// ログアウトは Server Action で行う。以前は <form method="post" action="/api/session?_method=DELETE">
+// だったが、Next.js の Route Handler は POST を DELETE に読み替えないため、
+// POST 側（idToken 必須）に落ちて常に失敗していた。
+async function logout() {
+  "use server";
+  await clearSessionCookie();
+  redirect("/login");
+}
 
 export default async function DashboardLayout({
   children,
@@ -30,12 +39,8 @@ export default async function DashboardLayout({
           </div>
           <div className="flex items-center gap-3 text-sm">
             <span className="text-zinc-500 hidden md:inline">{user.email}</span>
-            <form action="/api/session" method="post">
-              <button
-                formAction="/api/session?_method=DELETE"
-                formMethod="post"
-                className="text-zinc-500 hover:underline"
-              >
+            <form action={logout}>
+              <button type="submit" className="text-zinc-500 hover:underline">
                 ログアウト
               </button>
             </form>
