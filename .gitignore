@@ -85,3 +85,6 @@ docs/internal/
 # 同梱フォント（pnpm setup:fonts でビルド時にダウンロード）
 /public/fonts/*.ttf
 /public/fonts/*.otf
+
+# マーケ系スキルが読む内部コンテキスト（購入者に見せない）
+.agents/

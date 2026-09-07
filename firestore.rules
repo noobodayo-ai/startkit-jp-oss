@@ -41,8 +41,11 @@ service cloud.firestore {
         allow write: if false;
       }
 
-      // 任意のサブコレクション（ユーザーが追加するアプリデータ）
-      match /{document=**} {
+      // 任意のサブコレクション（ユーザーが追加するアプリデータ）は data/ 配下に置く。
+      // ここを /{document=**} にしてはいけない。Security Rules は OR 評価なので、
+      // 上の members / audit_logs の `allow write: if false` を打ち消してしまう
+      // （member が自分の role を owner に書き換えられる。監査ログも改ざん可能になる）。
+      match /data/{document=**} {
         allow read, write: if memberOf(tenantId);
       }
     }
