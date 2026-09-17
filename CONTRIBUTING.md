@@ -27,7 +27,7 @@ PR を送らず Issue や Discussion での提案にとどめてください。
 
 ## 機能要望
 
-GitHub Discussions に "Idea" として投稿してください。
+GitHub Issues に投稿してください（Discussions は使っていません）。
 
 ## Pull Request
 

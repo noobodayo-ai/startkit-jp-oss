@@ -58,7 +58,8 @@ firebase deploy --only firestore:rules,firestore:indexes
 
 ## 質問・不具合・連絡先
 
-- **不具合の報告・使い方の質問**: [Issues](https://github.com/noobodayo-ai/startkit-jp-oss/issues) へどうぞ。日本語で構いません。
+- **不具合の報告・使い方の質問・機能要望**: [Issues](https://github.com/noobodayo-ai/startkit-jp-oss/issues) へどうぞ。日本語で構いません。
+  （**脆弱性の報告だけは Issues に書かず**、[SECURITY.md](./SECURITY.md) の窓口へお願いします）
 - **Pro 版・ライセンス・その他のご相談**: puroguramusapoto@gmail.com
 
 ---
