@@ -56,6 +56,13 @@ firebase deploy --only firestore:rules,firestore:indexes
 
 ---
 
+## 質問・不具合・連絡先
+
+- **不具合の報告・使い方の質問**: [Issues](https://github.com/noobodayo-ai/startkit-jp-oss/issues) へどうぞ。日本語で構いません。
+- **Pro 版・ライセンス・その他のご相談**: puroguramusapoto@gmail.com
+
+---
+
 ## 実装の解説記事
 
 このリポジトリから切り出した実装の解説です。
